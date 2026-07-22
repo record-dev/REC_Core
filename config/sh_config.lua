@@ -1,5 +1,5 @@
 
----@class REC_ScriptTemplate.Shared.Config
+---@class REC_Core.Shared.Config
 local config = {}
 
 ---[[

@@ -5,7 +5,7 @@ local shApi = require "@REC_Library.shared.sh_api"
 ---@type string
 local prefix = GetCurrentResourceName()
 
----@class REC_ScriptTemplate.Shared.Events
+---@class REC_Core.Shared.Events
 local events = {
 
     client = {

@@ -1,11 +1,11 @@
 
----@type REC_ScriptTemplate.Client.Utils
-local utils = require "@REC_ScriptTemplate.client.cl_utils"
+---@type REC_Core.Client.Utils
+local utils = require "@REC_Core.client.cl_utils"
 
----@type REC_ScriptTemplate.Shared.Events
-local events = require "@REC_ScriptTemplate.shared.sh_event"
+---@type REC_Core.Shared.Events
+local events = require "@REC_Core.shared.sh_event"
 
----@class REC_ScriptTemplate.Client.Handler
+---@class REC_Core.Client.Handler
 local handler = {}
 
 ---[[

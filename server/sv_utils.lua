@@ -5,22 +5,22 @@ local svApi, shApi = require "@REC_Library.server.sv_api", require "@REC_Library
 ---@type REC_Utils.Server.Api
 local svUtilsApi = require "@REC_Utils.server.sv_api"
 
----@type REC_ScriptTemplate.Shared.Config, REC_ScriptTemplate.Server.Config
-local shCfg, svCfg = require "@REC_ScriptTemplate.config.sh_config", require "@REC_ScriptTemplate.config.sv_config"
+---@type REC_Core.Shared.Config, REC_Core.Server.Config
+local shCfg, svCfg = require "@REC_Core.config.sh_config", require "@REC_Core.config.sv_config"
 
 ---[[
 ---     DO NOT TOUCH
 ---]]
 ---@type string
-local tableName = "rec_scripttemplate"
+local tableName = "rec_core"
 
----@class REC_ScriptTemplate.Server.Utils
+---@class REC_Core.Server.Utils
 local utils = {}
 
 ---[[
 ---     Batch registration process
 ---]]
----@param serverManager REC_ScriptTemplate.Server.Manager.ServerManager
+---@param serverManager REC_Core.Server.Manager.ServerManager
 ---@param uid string
 ---@return boolean
 function utils:register(serverManager, uid)
@@ -47,7 +47,7 @@ function utils:register(serverManager, uid)
             return false
         end
 
-        ---@type REC_ScriptTemplate.Server.Utils.GetRecord.Return
+        ---@type REC_Core.Server.Utils.GetRecord.Return
         existRecord = {
             -- ...
         }
@@ -77,7 +77,7 @@ end
 ---[[
 ---     Batch unregistration process
 ---]]
----@param serverManager REC_ScriptTemplate.Server.Manager.ServerManager
+---@param serverManager REC_Core.Server.Manager.ServerManager
 ---@param uid string
 ---@return boolean
 function utils:unregister(serverManager, uid)
@@ -100,11 +100,11 @@ end
 ---     Create metadata
 ---]]
 ---@param uid string
----@param payload REC_ScriptTemplate.Server.Utils.CreateMetaData.Payload
----@return REC_ScriptTemplate.Server.Manager.ServerManagerConfigBuilder.MetaData
+---@param payload REC_Core.Server.Utils.CreateMetaData.Payload
+---@return REC_Core.Server.Manager.ServerManagerConfigBuilder.MetaData
 function utils:createMetaData(uid, payload)
 
-    ---@type REC_ScriptTemplate.Server.Manager.ServerManagerConfigBuilder.MetaData
+    ---@type REC_Core.Server.Manager.ServerManagerConfigBuilder.MetaData
     return {
         uid = uid,
         -- ...
@@ -114,9 +114,9 @@ end
 ---[[
 ---     Get metadata
 ---]]
----@param serverManager REC_ScriptTemplate.Server.Manager.ServerManager
+---@param serverManager REC_Core.Server.Manager.ServerManager
 ---@param uid string
----@return REC_ScriptTemplate.Server.Manager.ServerManagerConfigBuilder.MetaData|nil
+---@return REC_Core.Server.Manager.ServerManagerConfigBuilder.MetaData|nil
 function utils:getMetaData(serverManager, uid)
     local serverManagerInfo = serverManager.info
 
@@ -131,8 +131,8 @@ end
 ---[[
 ---     Register metadata
 ---]]
----@param serverManager REC_ScriptTemplate.Server.Manager.ServerManager
----@param metaData REC_ScriptTemplate.Server.Manager.ServerManagerConfigBuilder.MetaData
+---@param serverManager REC_Core.Server.Manager.ServerManager
+---@param metaData REC_Core.Server.Manager.ServerManagerConfigBuilder.MetaData
 ---@return boolean
 function utils:registerMetaData(serverManager, metaData)
     local serverManagerInfo = serverManager.info
@@ -152,7 +152,7 @@ end
 ---[[
 ---     Unregister metadata
 ---]]
----@param serverManager REC_ScriptTemplate.Server.Manager.ServerManager
+---@param serverManager REC_Core.Server.Manager.ServerManager
 ---@param uid string
 ---@return boolean
 function utils:unregisterMetaData(serverManager, uid)
@@ -173,7 +173,7 @@ end
 ---[[
 ---     Check metadata existence
 ---]]
----@param serverManager REC_ScriptTemplate.Server.Manager.ServerManager
+---@param serverManager REC_Core.Server.Manager.ServerManager
 ---@param uid string
 ---@return boolean
 function utils:doesMetaDataExist(serverManager, uid)
@@ -184,7 +184,7 @@ end
 ---     Create record
 ---]]
 ---@param uid string
----@param payload REC_ScriptTemplate.Server.Utils.CreateRecord.Payload
+---@param payload REC_Core.Server.Utils.CreateRecord.Payload
 ---@return boolean
 function utils:createRecord(uid, payload)
 
@@ -205,9 +205,9 @@ end
 ---[[
 ---     Update record
 ---]]
----@param serverManager REC_ScriptTemplate.Server.Manager.ServerManager
+---@param serverManager REC_Core.Server.Manager.ServerManager
 ---@param uid string
----@param payload REC_ScriptTemplate.Server.Utils.UpdateMetaData.Payload
+---@param payload REC_Core.Server.Utils.UpdateMetaData.Payload
 ---@return boolean
 function utils:updateMetaData(serverManager, uid, payload)
 
@@ -238,7 +238,7 @@ end
 ---     Also supports multiple searches
 ---]]
 ---@param targetUid string|string[]
----@return table<integer, REC_ScriptTemplate.Server.Utils.GetRecord.Return>|nil
+---@return table<integer, REC_Core.Server.Utils.GetRecord.Return>|nil
 function utils:getRecord(targetUid)
 
     -- Argument check
@@ -256,7 +256,7 @@ function utils:getRecord(targetUid)
     local query = "SELECT * FROM `%s` WHERE `------` IN (?)"
 
     -- Execute query
-    ---@type table<integer, REC_ScriptTemplate.Server.Utils.GetRecord.Return>
+    ---@type table<integer, REC_Core.Server.Utils.GetRecord.Return>
     local response = MySQL.query.await((query):format(tableName), { targetUid })
     if response == nil or #response == 0 then
         self:debugPrint("^1failed to get record...^0")
@@ -287,7 +287,7 @@ end
 ---     Update record
 ---]]
 ---@param uid string
----@param payload REC_ScriptTemplate.Server.Utils.UpdateRecord.Payload
+---@param payload REC_Core.Server.Utils.UpdateRecord.Payload
 ---@return boolean
 function utils:updateRecord(uid, payload)
 
@@ -341,13 +341,13 @@ function utils:debugPrint(...)
     end
 end
 
----@class REC_ScriptTemplate.Server.Utils.CreateMetaData.Payload
+---@class REC_Core.Server.Utils.CreateMetaData.Payload
 ---@
 
----@class REC_ScriptTemplate.Server.Utils.UpdateMetaData.Payload
+---@class REC_Core.Server.Utils.UpdateMetaData.Payload
 ---@
 
----@class REC_ScriptTemplate.Server.Utils.GetRecord.Return
+---@class REC_Core.Server.Utils.GetRecord.Return
 ---@field id? integer
 ---@
 ---@
@@ -355,10 +355,10 @@ end
 ---@field updatedAt? integer
 ---@field createdAt? integer
 
----@class REC_ScriptTemplate.Server.Utils.CreateRecord.Payload
+---@class REC_Core.Server.Utils.CreateRecord.Payload
 ---@
 
----@class REC_ScriptTemplate.Server.Utils.UpdateRecord.Payload
+---@class REC_Core.Server.Utils.UpdateRecord.Payload
 ---@
 
 

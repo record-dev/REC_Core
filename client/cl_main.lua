@@ -7,23 +7,23 @@ local apiShEnums = shApi.Enums
 ---@type REC_Utils.Client.Api
 local clUtilsApi = require "@REC_Utils.client.cl_api"
 
----@type REC_ScriptTemplate.Shared.Config
-local shCfg = require "@REC_ScriptTemplate.config.sh_config"
+---@type REC_Core.Shared.Config
+local shCfg = require "@REC_Core.config.sh_config"
 
----@type REC_ScriptTemplate.Shared.Enum
-local shEnums = require "@REC_ScriptTemplate.shared.sh_enum"
+---@type REC_Core.Shared.Enum
+local shEnums = require "@REC_Core.shared.sh_enum"
 
----@type REC_ScriptTemplate.Client.Utils
-local utils = require "@REC_ScriptTemplate.client.cl_utils"
+---@type REC_Core.Client.Utils
+local utils = require "@REC_Core.client.cl_utils"
 
----@type REC_ScriptTemplate.Shared.Events
-local events = require "@REC_ScriptTemplate.shared.sh_event"
+---@type REC_Core.Shared.Events
+local events = require "@REC_Core.shared.sh_event"
 
----@type REC_ScriptTemplate.Locales
-local locales = require ("@REC_ScriptTemplate.locales.".. apiShCfg.language)
+---@type REC_Core.Locales
+local locales = require ("@REC_Core.locales.".. apiShCfg.language)
 
----@type REC_ScriptTemplate.Client.Manager.SessionManager
-local sessionManager = require "@REC_ScriptTemplate.client.manager.cl_sessionManager"
+---@type REC_Core.Client.Manager.SessionManager
+local sessionManager = require "@REC_Core.client.manager.cl_sessionManager"
 
 ---[[
 ---     Initialization

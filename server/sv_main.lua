@@ -3,20 +3,20 @@
 local svApi, shApi = require "@REC_Library.server.sv_api", require "@REC_Library.shared.sh_api"
 local apiShCfg = shApi.Config
 
----@type REC_ScriptTemplate.Shared.Config, REC_ScriptTemplate.Server.Config
-local shCfg, svCfg = require "@REC_ScriptTemplate.config.sh_config", require "@REC_ScriptTemplate.config.sv_config"
+---@type REC_Core.Shared.Config, REC_Core.Server.Config
+local shCfg, svCfg = require "@REC_Core.config.sh_config", require "@REC_Core.config.sv_config"
 
----@type REC_ScriptTemplate.Server.Utils
-local utils = require "@REC_ScriptTemplate.server.sv_utils"
+---@type REC_Core.Server.Utils
+local utils = require "@REC_Core.server.sv_utils"
 
----@type REC_ScriptTemplate.Shared.Events
-local events = require "@REC_ScriptTemplate.shared.sh_event"
+---@type REC_Core.Shared.Events
+local events = require "@REC_Core.shared.sh_event"
 
----@type REC_ScriptTemplate.Locales
-local locales = require ("@REC_ScriptTemplate.locales.".. apiShCfg.language)
+---@type REC_Core.Locales
+local locales = require ("@REC_Core.locales.".. apiShCfg.language)
 
----@type REC_ScriptTemplate.Server.Manager.ServerManager
-local serverManager = require "@REC_ScriptTemplate.server.manager.sv_serverManager"
+---@type REC_Core.Server.Manager.ServerManager
+local serverManager = require "@REC_Core.server.manager.sv_serverManager"
 
 ---[[
 ---     Initialization

@@ -1,5 +1,5 @@
 
----@class REC_ScriptTemplate.Server.Config
+---@class REC_Core.Server.Config
 local config = {}
 
 ---[[

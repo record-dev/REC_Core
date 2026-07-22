@@ -1,5 +1,5 @@
 
----@type REC_ScriptTemplate.Locales
+---@type REC_Core.Locales
 return {
 
     

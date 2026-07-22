@@ -9,5 +9,5 @@
 ---     Locales
 ---]]
 
----@class REC_ScriptTemplate.Locales
+---@class REC_Core.Locales
 ---@

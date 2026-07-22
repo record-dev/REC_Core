@@ -1,8 +1,8 @@
 
----@class REC_ScriptTemplate.Shared.Enum
+---@class REC_Core.Shared.Enum
 local enum = {}
 
----@enum REC_ScriptTemplate.Shared.Enum.Status
+---@enum REC_Core.Shared.Enum.Status
 enum.status = {
     default = "default",
 }

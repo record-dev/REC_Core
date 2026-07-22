@@ -2,10 +2,10 @@
 ---@type REC_Utils.Client.Api
 local clUtilsApi = require "@REC_Utils.client.cl_api"
 
----@type REC_ScriptTemplate.Server.Config
-local shCfg = require "@REC_ScriptTemplate.config.sh_config"
+---@type REC_Core.Server.Config
+local shCfg = require "@REC_Core.config.sh_config"
 
----@class REC_ScriptTemplate.Client.Utils
+---@class REC_Core.Client.Utils
 local utils = {}
 
 ---[[
