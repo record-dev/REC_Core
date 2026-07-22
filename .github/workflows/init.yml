@@ -1,0 +1,45 @@
+name: Initialize New Repository
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  setup:
+    # テンプレートリポジトリ自身（REC_ScriptTemplate）ではない場合のみ実行
+    if: github.event.repository.name != 'REC_ScriptTemplate'
+    
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Replace Template Name (Case-Sensitive)
+        run: |
+
+          NEW_NAME="${{ github.event.repository.name }}"
+
+          NEW_NAME_LOWER=$(echo "$NEW_NAME" | tr '[:upper:]' '[:lower:]')
+          
+          echo "Original: $NEW_NAME"
+          echo "Lowercase: $NEW_NAME_LOWER"
+          
+          find . -type f -not -path '*/.*' -exec sed -i "s/REC_ScriptTemplate/$NEW_NAME/g" {} +
+          
+          find . -type f -not -path '*/.*' -exec sed -i "s/rec_scripttemplate/$NEW_NAME_LOWER/g" {} +
+
+      - name: Cleanup and Commit
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          
+          # 初期化Workflowを削除
+          rm .github/workflows/init.yml
+          
+          git add .
+          git commit -m "chore: initialize repository"
+          git push origin HEAD:main

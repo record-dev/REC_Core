@@ -1,0 +1,77 @@
+name: Release and Update Version
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Update fxmanifest.lua version
+        run: |
+          NEW_VERSION=${{ github.ref_name }}
+          sed -i "s/^version\s\+['\"].*['\"]/version '$NEW_VERSION'/g" fxmanifest.lua
+
+      - name: Commit and Push changes
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add fxmanifest.lua
+          git commit -m "chore: bump version to ${{ github.ref_name }}"
+          git pull --rebase origin main
+          git push origin HEAD:main
+
+      - name: Build distribution folder
+        run: |
+          # リポジトリ名を自動取得して変数にする
+          TARGET_NAME=${{ github.event.repository.name }}
+          DIST_DIR="_dist"
+          TARGET_PATH="$DIST_DIR/$TARGET_NAME"
+          
+          mkdir -p "$TARGET_PATH"
+          
+          # フォルダ・ファイルのコピー
+          cp -r .vscode client config handler locales server shared .gitignore LICENSE README.md annotations.lua fxmanifest.lua "$TARGET_PATH/"
+          
+          # web/build の処理
+          if [ -d "web/build" ]; then
+            mkdir -p "$TARGET_PATH/web"
+            cp -r web/build "$TARGET_PATH/web/"
+          fi
+          
+          # SQLの処理 (存在しなくてもエラーにしない)
+          cp *.sql "$TARGET_PATH/" 2>/dev/null || :
+          
+          # テストファイルの削除
+          rm -f "$TARGET_PATH/shared/sh_main.test.lua"
+          rm -f "$TARGET_PATH/client/cl_main.test.lua"
+          rm -f "$TARGET_PATH/server/sv_main.test.lua"
+          
+          # config.debugMode を false に強制的に設定
+          sed -i "s/^config\.debugMode\s*=\s*.*/config.debugMode = false/" "$TARGET_PATH/config/sh_config.lua"
+          sed -i "s/^config\.debugMode\s*=\s*.*/config.debugMode = false/" "$TARGET_PATH/config/sv_config.lua"
+
+          # ZIP圧縮 (ファイル名をリポジトリ名にする)
+          cd "$DIST_DIR"
+          zip -r "../${TARGET_NAME}.zip" "$TARGET_NAME"
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+
+          files: ${{ github.event.repository.name }}.zip
+          name: ${{ github.ref_name }}
+          tag_name: ${{ github.ref_name }}
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
