@@ -15,7 +15,7 @@ lua54 'yes'
 
 version 'v0.0.0'
 author 'Ⓒ RE:CORD | @Nazu'
-description 'Ⓒ RE:CORD Script Template'
+description 'Core Script'
 
 dependencies {
     'ox_lib',
