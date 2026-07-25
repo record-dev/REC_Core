@@ -43,15 +43,3 @@ server_scripts {
     'server/manager/*.lua',
     'server/*.lua',
 }
-
-escrow_ignore {
-    'config/*.lua',
-    'handler/*.lua',
-    'locales/*.lua',
-    'client/cl_utils.lua',
-    'client/manager/*.lua',
-    'server/sv_utils.lua',
-    'server/manager/*.lua',
-    'shared/*.lua',
-    'annotations.lua',
-}
