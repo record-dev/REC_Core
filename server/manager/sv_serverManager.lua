@@ -12,8 +12,6 @@ local utils = require "@REC_Core.server.sv_utils"
 local events = require "@REC_Core.shared.sh_event"
 
 ---@class REC_Core.Server.Manager.ServerManagerConfigBuilder: REC_Library.Server.Class.Manager.ServerManagerConfigBuilder
----@field metaDatas table<string, REC_Core.Server.Manager.ServerManagerConfigBuilder.MetaData>
----@field playerIdToCitizenId table<string, string>
 local serverManagerConfigBuilder = svApi.Class.Manager.ServerManagerConfigBuilder:new()
     :setOnInit(function (self)
         ---@cast self REC_Core.Server.Manager.ServerManager
@@ -23,8 +21,6 @@ local serverManagerConfigBuilder = svApi.Class.Manager.ServerManagerConfigBuilde
         ---     Initialization
         ---]]
 
-        info.metaDatas = {}
-        info.playerIdToCitizenId = {}
 
         return true
     end)
@@ -33,9 +29,5 @@ local serverManagerConfigBuilder = svApi.Class.Manager.ServerManagerConfigBuilde
 ---@class REC_Core.Server.Manager.ServerManager: REC_Library.Server.Class.Manager.ServerManager]
 ---@field info REC_Core.Server.Manager.ServerManagerConfigBuilder
 local serverManager = svApi.Class.Manager.ServerManager:new(serverManagerConfigBuilder)
-
----@class REC_Core.Server.Manager.ServerManagerConfigBuilder.MetaData
----@field uid string
----@
 
 return serverManager
