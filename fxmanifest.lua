@@ -13,7 +13,7 @@ fx_version 'cerulean'
 game 'gta5'
 lua54 'yes'
 
-version 'v0.0.0'
+version 'v0.1.0'
 author 'Ⓒ RE:CORD | @Nazu'
 description 'Core Script'
 
