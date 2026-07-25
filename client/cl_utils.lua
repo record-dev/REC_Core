@@ -32,7 +32,7 @@ end
 ---[[
 ---     Debug output
 ---]]
----@param ... string
+---@param ... any
 function utils:debugPrint(...)
     if shCfg.debugMode == true then
         print(...)
