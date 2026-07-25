@@ -37,7 +37,7 @@ client_scripts {
 }
 
 server_scripts {
-    -- '@oxmysql/lib/MySQL.lua',
+    '@oxmysql/lib/MySQL.lua',
     'config/sv_config.lua',
     'handler/sv_handler.lua',
     'server/manager/*.lua',
