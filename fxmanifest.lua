@@ -19,6 +19,7 @@ description 'Core Script'
 
 dependencies {
     'ox_lib',
+    'oxmysql',
     'REC_Library',
     'REC_PlayerManager',
 }
