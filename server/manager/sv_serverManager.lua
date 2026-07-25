@@ -11,18 +11,6 @@ local utils = require "@REC_Core.server.sv_utils"
 ---@type REC_Core.Shared.Events
 local events = require "@REC_Core.shared.sh_event"
 
----@type REC_Core.Server.Manager.EntityManager
-local entityManager = require "@REC_Core.server.manager.sv_entityManager"
-
----@type REC_Core.Server.Manager.OwnershipManager
-local ownershipManager = require "@REC_Core.server.manager.sv_ownershipManager"
-
----@type REC_Core.Server.Manager.PlayerManager
-local playerManager = require "@REC_Core.server.manager.sv_playerManager"
-
----@type REC_Core.Server.Manager.ZoneManager
-local zoneManager = require "@REC_Core.server.manager.sv_zoneManager"
-
 ---@class REC_Core.Server.Manager.ServerManagerConfigBuilder: REC_Library.Server.Class.Manager.ServerManagerConfigBuilder
 ---@field metaDatas table<string, REC_Core.Server.Manager.ServerManagerConfigBuilder.MetaData>
 ---@field playerIdToCitizenId table<string, string>
@@ -40,10 +28,6 @@ local serverManagerConfigBuilder = svApi.Class.Manager.ServerManagerConfigBuilde
 
         return true
     end)
-    :setPlayerManager(playerManager)
-    :setEntityManager(entityManager)
-    :setOwnershipManager(ownershipManager)
-    :setZoneManager(zoneManager)
     :setCustomProperties({})
 
 ---@class REC_Core.Server.Manager.ServerManager: REC_Library.Server.Class.Manager.ServerManager]
