@@ -90,10 +90,3 @@ AddEventHandler('onResourceStop', function(resource)
 
     print("リソース停止処理を検知...")
 end)
-
----[[
----     Function to check if process is ongoing from other resources
----]]
--- exports('isActive', function()
---     return 
--- end)
