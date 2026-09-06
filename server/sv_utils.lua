@@ -173,23 +173,6 @@ function utils:generateCitizenId()
 end
 
 ---[[
----     Name of another core running on this server, nil when there is none
----]]
----@return string|nil
-function utils:detectOtherFramework()
-
-    for _, name in ipairs(svCfg.framework.others) do
-
-        local state = GetResourceState(name)
-        if state == "started" or state == "starting" then
-            return name
-        end
-    end
-
-    return nil
-end
-
----[[
 ---     Where the player's ped is right now
 ---]]
 ---@param playerId integer|nil
