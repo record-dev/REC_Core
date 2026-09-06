@@ -145,7 +145,7 @@ jobs:
             --arg tag "$TAG_NAME" \
             --arg changelog "$CHANGELOG_TRIMMED" \
             --arg download_url "$DOWNLOAD_URL" \
-            --arg doc_url "https://docs.re-cord.dev/en/framework//$REPO_NAME_LOWER" \
+            --arg doc_url "https://docs.re-cord.dev/en/framework/$REPO_NAME_LOWER" \
             '{
               flags: 32768,
               components: [
