@@ -118,64 +118,64 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # - name: Post to Discord
-      #   if: steps.changelog.outcome == 'success'
-      #   env:
-      #     CHANGELOG: ${{ steps.changelog.outputs.changes }}
-      #     REPO_NAME: ${{ github.event.repository.name }}
-      #     TAG_NAME: ${{ github.ref_name }}
-      #     DOWNLOAD_URL: https://github.com/${{ github.repository }}/releases/${{ github.ref_name }}
-      #     DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
-      #   run: |
-      #     set -e
+      - name: Post to Discord
+        if: steps.changelog.outcome == 'success'
+        env:
+          CHANGELOG: ${{ steps.changelog.outputs.changes }}
+          REPO_NAME: ${{ github.event.repository.name }}
+          TAG_NAME: ${{ github.ref_name }}
+          DOWNLOAD_URL: https://github.com/${{ github.repository }}/releases/${{ github.ref_name }}
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          set -e
 
-      #     if [ -z "$DISCORD_WEBHOOK" ]; then
-      #       echo "::error::DISCORD_WEBHOOK is EMPTY. Secret 'DISCORD_WEBHOOK_URL' が未設定か名前が違います"
-      #       exit 1
-      #     fi
+          if [ -z "$DISCORD_WEBHOOK" ]; then
+            echo "::error::DISCORD_WEBHOOK is EMPTY. Secret 'DISCORD_WEBHOOK_URL' が未設定か名前が違います"
+            exit 1
+          fi
 
-      #     # doc_url用にリポジトリ名を小文字化
-      #     REPO_NAME_LOWER="${REPO_NAME,,}"
+          # doc_url用にリポジトリ名を小文字化
+          REPO_NAME_LOWER="${REPO_NAME,,}"
 
-      #     # text display は1ブロック4000文字制限があるのでトリム
-      #     CHANGELOG_TRIMMED=$(echo "$CHANGELOG" | cut -c1-3500)
+          # text display は1ブロック4000文字制限があるのでトリム
+          CHANGELOG_TRIMMED=$(echo "$CHANGELOG" | cut -c1-3500)
 
-      #     PAYLOAD=$(jq -n \
-      #       --arg repo "$REPO_NAME" \
-      #       --arg tag "$TAG_NAME" \
-      #       --arg changelog "$CHANGELOG_TRIMMED" \
-      #       --arg download_url "$DOWNLOAD_URL" \
-      #       --arg doc_url "https://docs.re-cord.dev/en/resources/$REPO_NAME_LOWER" \
-      #       '{
-      #         flags: 32768,
-      #         components: [
-      #           {
-      #             type: 17,
-      #             components: [
-      #               { type: 10, content: "## `\($repo)` @ `\($tag)` has been released" },
-      #               { type: 14, spacing: 1, divider: true },
-      #               { type: 10, content: "### Changelog\n\n\($changelog)" },
-      #               { type: 14, spacing: 1, divider: true },
-      #               {
-      #                 type: 1,
-      #                 components: [
-      #                   { type: 2, style: 5, label: "Download", url: $download_url },
-      #                   { type: 2, style: 5, label: "Document", url: $doc_url }
-      #                 ]
-      #               }
-      #             ]
-      #           }
-      #         ]
-      #       }')
+          PAYLOAD=$(jq -n \
+            --arg repo "$REPO_NAME" \
+            --arg tag "$TAG_NAME" \
+            --arg changelog "$CHANGELOG_TRIMMED" \
+            --arg download_url "$DOWNLOAD_URL" \
+            --arg doc_url "https://docs.re-cord.dev/en/resources/$REPO_NAME_LOWER" \
+            '{
+              flags: 32768,
+              components: [
+                {
+                  type: 17,
+                  components: [
+                    { type: 10, content: "## `\($repo)` @ `\($tag)` has been released" },
+                    { type: 14, spacing: 1, divider: true },
+                    { type: 10, content: "### Changelog\n\n\($changelog)" },
+                    { type: 14, spacing: 1, divider: true },
+                    {
+                      type: 1,
+                      components: [
+                        { type: 2, style: 5, label: "Download", url: $download_url },
+                        { type: 2, style: 5, label: "Document", url: $doc_url }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }')
 
-      #     # JSONとして妥当か検証
-      #     echo "$PAYLOAD" | jq . > /dev/null
+          # JSONとして妥当か検証
+          echo "$PAYLOAD" | jq . > /dev/null
 
-      #     curl -s -w "\nHTTP_STATUS:%{http_code}\n" \
-      #          -H "Content-Type: application/json" \
-      #          -X POST \
-      #          -d "$PAYLOAD" \
-      #          "$DISCORD_WEBHOOK?wait=true&with_components=true"
+          curl -s -w "\nHTTP_STATUS:%{http_code}\n" \
+               -H "Content-Type: application/json" \
+               -X POST \
+               -d "$PAYLOAD" \
+               "$DISCORD_WEBHOOK?wait=true&with_components=true"
 
       - name: Commit and Push version bump
         env:
