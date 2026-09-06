@@ -18,8 +18,8 @@ author 'Ⓒ RE:CORD | @Nazu'
 description 'Ⓒ RE:CORD Core'
 
 dependencies {
-    'REC_Library',
     'oxmysql',
+    'REC_Library',
 }
 
 ---[[
