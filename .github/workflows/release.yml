@@ -1,0 +1,189 @@
+name: Release and Update Version
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@d72941d797fd3113feb6b93fd0dec494b13a2547 # v1.12.0
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+
+      - name: Checkout code
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          fetch-depth: 0
+          token: ${{ steps.app-token.outputs.token }}
+
+      - name: Update fxmanifest.lua version
+        run: |
+          NEW_VERSION=${{ github.ref_name }}
+          NEW_VERSION=${NEW_VERSION#v}
+          sed -i "s/^version\s\+['\"].*['\"]/version '$NEW_VERSION'/g" fxmanifest.lua
+
+      - name: Get GitHub App user info
+        id: app-user
+        run: |
+          echo "id=$(gh api "/users/${{ steps.app-token.outputs.app-slug }}[bot]" --jq .id)" >> "$GITHUB_OUTPUT"
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+
+      # - name: Setup pnpm
+      #   uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v4.4.0
+      #   with:
+      #     version: 10
+
+      # - name: Setup Node.js
+      #   uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+      #   with:
+      #     node-version: 22
+      #     cache: pnpm
+      #     cache-dependency-path: web/pnpm-lock.yaml
+
+      # - name: Build web
+      #   working-directory: web
+      #   run: |
+      #     pnpm install --frozen-lockfile
+      #     pnpm build
+
+      - name: Build distribution folder
+        run: |
+          # リポジトリ名を自動取得して変数にする
+          TARGET_NAME=${{ github.event.repository.name }}
+          DIST_DIR="build"
+          TARGET_PATH="$DIST_DIR/$TARGET_NAME"
+
+          mkdir -p "$TARGET_PATH"
+
+          # フォルダ・ファイルのコピー (このリポジトリに無いものはスキップ)
+          for ITEM in client config handler locales server shared _install LICENSE README.md annotations.lua fxmanifest.lua; do
+            if [ -e "$ITEM" ]; then
+              cp -r "$ITEM" "$TARGET_PATH/"
+            fi
+          done
+
+          # web/build の処理
+          if [ -d "web/build" ]; then
+            mkdir -p "$TARGET_PATH/web"
+            cp -r web/build "$TARGET_PATH/web/"
+          fi
+
+          # SQLの処理 (存在しなくてもエラーにしない)
+          cp *.sql "$TARGET_PATH/" 2>/dev/null || :
+
+          # テストファイルの削除
+          rm -f "$TARGET_PATH/shared/sh_main.test.lua"
+          rm -f "$TARGET_PATH/client/cl_main.test.lua"
+          rm -f "$TARGET_PATH/server/sv_main.test.lua"
+
+          # config.debugMode を false に強制的に設定
+          for CFG in "$TARGET_PATH/config/sh_config.lua" "$TARGET_PATH/config/sv_config.lua"; do
+            if [ -f "$CFG" ]; then
+              sed -i "s/^config\.debugMode\s*=\s*.*/config.debugMode = false/" "$CFG"
+            fi
+          done
+
+          # ZIP圧縮 (ファイル名をリポジトリ名にする)
+          cd "$DIST_DIR"
+          zip -r "../${TARGET_NAME}.zip" "$TARGET_NAME"
+
+      - name: Update CHANGELOG
+        id: changelog
+        uses: requarks/changelog-action@b78a3354a01f4a1affb484b9264b506a815c46b1 # v1.10.3
+        continue-on-error: true
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          tag: ${{ github.ref_name }}
+          includeInvalidCommits: true
+          useGitmojis: true
+          writeToFile: false
+
+      - name: Create Release
+        uses: softprops/action-gh-release@3d0d9888cb7fd7b750713d6e236d1fcb99157228 # v3.0.2
+        with:
+          files: ${{ github.event.repository.name }}.zip
+          name: ${{ github.ref_name }}
+          tag_name: ${{ github.ref_name }}
+          body: ${{ steps.changelog.outputs.changes }}
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # - name: Post to Discord
+      #   if: steps.changelog.outcome == 'success'
+      #   env:
+      #     CHANGELOG: ${{ steps.changelog.outputs.changes }}
+      #     REPO_NAME: ${{ github.event.repository.name }}
+      #     TAG_NAME: ${{ github.ref_name }}
+      #     DOWNLOAD_URL: https://github.com/${{ github.repository }}/releases/${{ github.ref_name }}
+      #     DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
+      #   run: |
+      #     set -e
+
+      #     if [ -z "$DISCORD_WEBHOOK" ]; then
+      #       echo "::error::DISCORD_WEBHOOK is EMPTY. Secret 'DISCORD_WEBHOOK_URL' が未設定か名前が違います"
+      #       exit 1
+      #     fi
+
+      #     # doc_url用にリポジトリ名を小文字化
+      #     REPO_NAME_LOWER="${REPO_NAME,,}"
+
+      #     # text display は1ブロック4000文字制限があるのでトリム
+      #     CHANGELOG_TRIMMED=$(echo "$CHANGELOG" | cut -c1-3500)
+
+      #     PAYLOAD=$(jq -n \
+      #       --arg repo "$REPO_NAME" \
+      #       --arg tag "$TAG_NAME" \
+      #       --arg changelog "$CHANGELOG_TRIMMED" \
+      #       --arg download_url "$DOWNLOAD_URL" \
+      #       --arg doc_url "https://docs.re-cord.dev/en/resources/$REPO_NAME_LOWER" \
+      #       '{
+      #         flags: 32768,
+      #         components: [
+      #           {
+      #             type: 17,
+      #             components: [
+      #               { type: 10, content: "## `\($repo)` @ `\($tag)` has been released" },
+      #               { type: 14, spacing: 1, divider: true },
+      #               { type: 10, content: "### Changelog\n\n\($changelog)" },
+      #               { type: 14, spacing: 1, divider: true },
+      #               {
+      #                 type: 1,
+      #                 components: [
+      #                   { type: 2, style: 5, label: "Download", url: $download_url },
+      #                   { type: 2, style: 5, label: "Document", url: $doc_url }
+      #                 ]
+      #               }
+      #             ]
+      #           }
+      #         ]
+      #       }')
+
+      #     # JSONとして妥当か検証
+      #     echo "$PAYLOAD" | jq . > /dev/null
+
+      #     curl -s -w "\nHTTP_STATUS:%{http_code}\n" \
+      #          -H "Content-Type: application/json" \
+      #          -X POST \
+      #          -d "$PAYLOAD" \
+      #          "$DISCORD_WEBHOOK?wait=true&with_components=true"
+
+      - name: Commit and Push version bump
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          git config --local user.name "${{ steps.app-token.outputs.app-slug }}[bot]"
+          git config --local user.email "${{ steps.app-user.outputs.id }}+${{ steps.app-token.outputs.app-slug }}[bot]@users.noreply.github.com"
+          git add fxmanifest.lua
+          git commit -m "chore: bump version to ${{ github.ref_name }}"
+          git pull --rebase origin main
+          git push origin HEAD:main
