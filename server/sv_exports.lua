@@ -69,7 +69,7 @@ end
 ---]]
 
 ---[[
----     whether the core is running (false next to another framework)
+---     whether the core finished booting
 ---]]
 ---@return boolean
 exports("isActive", function ()

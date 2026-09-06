@@ -54,19 +54,6 @@ bridge:registerCallback(events.server.callbacks.getStatus, function (src)
     return players:getStatus(src)
 end)
 
----[[
----     Another core on this server
----]]
-local otherFramework = utils:detectOtherFramework()
-if otherFramework ~= nil and svCfg.framework.allowOtherFramework == false then
-    utils:log(("^3%s is running, so REC_Core stays dormant. Set config.framework.allowOtherFramework to true in config/sv_config.lua to run both.^0"):format(otherFramework))
-    return
-end
-
-if otherFramework ~= nil then
-    utils:log(("^3%s is running next to REC_Core, both will try to own the player^0"):format(otherFramework))
-end
-
 serverManagerInfo.isActive = true
 
 ---[[

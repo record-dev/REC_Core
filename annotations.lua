@@ -12,7 +12,7 @@ exports.REC_Core = {}
 
 ---**`SERVER`**
 ---
----Whether the core is running (false while dormant next to another framework)
+---Whether the core finished booting
 ---@return boolean
 function exports.REC_Core:isActive() end
 

@@ -15,26 +15,6 @@ local config = {}
 config.debugMode = true
 
 ---[[
----     Another framework on the same server
----     Two cores fighting over the character menu breaks both, so REC_Core stays
----     dormant when one of these resources is running. Set allowOtherFramework to
----     true only while testing REC_Core next to another core.
----]]
-config.framework = {
-
-    ---@type boolean
-    allowOtherFramework = false,
-
-    ---@type string[]
-    others = {
-        "qbx_core",
-        "qb-core",
-        "es_extended",
-        "ox_core",
-    },
-}
-
----[[
 ---     Identifier a character is tied to
 ---     The first type that the player has is used, in this order.
 ---]]
